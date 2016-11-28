@@ -1,0 +1,5 @@
+docker run --name postgresql -itd --restart always \
+  --publish 5432:5432 \
+  --volume /srv/docker/postgresql:/var/lib/postgresql \
+  --env 'PG_PASSWORD=bench' --env 'DB_USER=bench' --env 'DB_PASS=bench' --env 'DB_NAME=bench'\
+  sameersbn/postgresql:9.5-3
