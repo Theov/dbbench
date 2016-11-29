@@ -3,16 +3,15 @@ package Dbs.Mongo;
 import Commons.DataSetGenerator.DataSet;
 import Dbs.Generic.GenericWorker;
 import com.mongodb.*;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Sorts;
-import com.mongodb.util.JSON;
 import org.bson.Document;
-import org.bson.conversions.Bson;
 
 public class MongoWorker extends GenericWorker {
     private MongoSingleton singleton = new MongoSingleton();
-    private MongoClient cli;
+    private MongoCollection col;
     private MongoDatabase db;
 
     public MongoWorker(DataSet dataSet) {
@@ -22,53 +21,60 @@ public class MongoWorker extends GenericWorker {
 
     @Override
     public Object setUp() {
-        cli = singleton.getConnection();
+        MongoClient cli = singleton.getConnection();
         db = cli.getDatabase("bench");
-        //db.createCollection("bench");
+
+        if(null != db.getCollection("bench")){
+            db.getCollection("bench").drop();
+        }else{
+            db.createCollection("bench");
+        }
+
+        col = db.getCollection("bench");
 
         return 0;
     }
 
     @Override
     public Object insert() {
-        //dataSet.getDataset().forEach(item->db.getCollection("bench").insertOne(new Document(JSON.parse(item))));
-        return 0;
-    }
-
-    @Override
-    public Object updateAll() {
-        db.getCollection("bench").updateMany(Filters.eq("uuid", "magicEntry"), new Document("$set", new Document("uuid", "XXXX")));
-        return 0;
-    }
-
-    @Override
-    public Object selectAll() {
-        db.getCollection("bench").find();
+        for(int i = 0; i < dataSet.getNumberOfElements(); i++){
+            col.insertOne(dataSet.getDocumentDocuments().get(i));
+        }
 
         return 0;
     }
 
     @Override
-    public Object selectOne(String itemToFind) {
-        db.getCollection("bench").find(Filters.eq("uuid", "magicEntry"));
+    public Object update() {
+        for(int i = 0; i < dataSet.getNumberOfElements(); i++) {
+            col.updateOne(dataSet.getMagicFilter(), dataSet.getUpdatedDocumentDocument());
+        }
+
         return 0;
     }
 
     @Override
-    public Object sort() {
-        Bson sort = Sorts.ascending("uuid");
-        db.getCollection("bench").find().sort(sort);
+    public Object select() {
+        for(int i = 0; i < dataSet.getNumberOfElements(); i++) {
+            col.find(dataSet.getMagicFilter());
+        }
+
         return 0;
     }
 
     @Override
     public Object delete() {
-        db.getCollection("bench").deleteMany(new Document());
+        for(int i = 0; i < dataSet.getNumberOfElements(); i++) {
+            col.deleteOne(dataSet.getDocumentDocuments().get(i));
+        }
         return 0;
     }
 
     @Override
-    public Object tearDown() {
+    public Object stat(){
+        Document stat = db.runCommand(new Document("collStats", "bench"));
+        System.out.println(stat);
+
         return 0;
     }
 }

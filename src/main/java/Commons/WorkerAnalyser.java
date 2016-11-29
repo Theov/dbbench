@@ -16,17 +16,15 @@ public class WorkerAnalyser {
 
         executor(() -> worker.setUp(), "setUp");
         executor(() -> worker.insert(), "insert");
-        executor(() -> worker.selectAll(), "selectAll");
-        executor(() -> worker.selectOne("magicEntry"), "selectOne");
-        executor(() -> worker.sort(), "sort");
-        executor(() -> worker.updateAll(), "updateAll");
+        executor(() -> worker.select(), "select");
+        executor(() -> worker.update(), "update");
+        executor(() -> worker.stat(), "stat");
         executor(() -> worker.delete(), "delete");
-        executor(() -> worker.tearDown(), "tearDown");
 
         System.out.println("Bench finished for " + worker.getWorkerName());
     }
 
-    public void executor(Callable<?> func, String operation){
+    private void executor(Callable<?> func, String operation){
         long startTime = System.currentTimeMillis();
 
         try {

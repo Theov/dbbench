@@ -19,15 +19,11 @@ public class GenericWorker implements Worker {
         return null;
     }
 
-    public Object updateAll() {
+    public Object update() {
         return null;
     }
 
-    public Object selectAll() {
-        return null;
-    }
-
-    public Object selectOne(String itemToFind) {
+    public Object select() {
         return null;
     }
 
@@ -35,11 +31,7 @@ public class GenericWorker implements Worker {
         return null;
     }
 
-    public Object sort() {
-        return null;
-    }
-
-    public Object tearDown() {
+    public Object stat() {
         return null;
     }
 

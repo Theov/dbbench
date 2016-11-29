@@ -4,6 +4,7 @@ import Commons.DataSetGenerator.DataSet;
 import Dbs.Generic.GenericWorker;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -24,7 +25,7 @@ public class PostgreWorker extends GenericWorker {
             Statement st = con.createStatement();
             st.executeQuery("CREATE TABLE IF NOT EXISTS bench (data jsonb);");
         } catch (SQLException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         return 0;
@@ -37,7 +38,7 @@ public class PostgreWorker extends GenericWorker {
                 Statement st = con.createStatement();
                 st.executeQuery("INSERT INTO bench VALUES ('"+document+"')");
             } catch (SQLException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
         }
 
@@ -45,67 +46,62 @@ public class PostgreWorker extends GenericWorker {
     }
 
     @Override
-    public Object updateAll() {
-        try {
-            Statement st = con.createStatement();
-            st.executeQuery("UPDATE FROM bench SET data = '{\"uuid\":\" " + "XXXX" + " \"}'");
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public Object update() {
+        for(int i = 0; i < dataSet.getNumberOfElements(); i++) {
+            try {
+                Statement st = con.createStatement();
+                st.executeQuery("UPDATE FROM bench SET data = '" + dataSet.getUpdatedDocument() + "' WHERE data->>firstname = '"+dataSet.getMagicFirstName()+"");
+            } catch (SQLException e) {
+                //e.printStackTrace();
+            }
         }
-
         return 0;
     }
 
     @Override
-    public Object selectAll() {
-        try {
-            Statement st = con.createStatement();
-            st.executeQuery("SELECT * FROM bench");
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public Object select() {
+        for(int i = 0; i < dataSet.getNumberOfElements(); i++) {
+            try {
+                Statement st = con.createStatement();
+                st.executeQuery("SELECT * FROM bench WHERE data->>firstname = '"+dataSet.getMagicFirstName()+"'");
+            } catch (SQLException e) {
+                //e.printStackTrace();
+            }
         }
-
-        return 0;
-    }
-
-    @Override
-    public Object selectOne(String itemToFind) {
-        try {
-            Statement st = con.createStatement();
-            st.executeQuery("SELECT * FROM bench WHERE data->>'uuid' = 'magicEntry'");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
         return 0;
     }
 
     @Override
     public Object delete() {
-        try {
-            Statement st = con.createStatement();
-            st.executeQuery("DELETE FROM bench;");
-        } catch (SQLException e) {
-            e.printStackTrace();
+        for(int i = 0; i < dataSet.getNumberOfElements(); i++) {
+            try {
+                Statement st = con.createStatement();
+                st.executeQuery("DELETE FROM bench WHERE data = '"+ dataSet.getDataset().get(i) +"'");
+            } catch (SQLException e) {
+                //e.printStackTrace();
+            }
         }
 
         return 0;
     }
 
+
     @Override
-    public Object sort() {
+    public Object stat(){
+
         try {
             Statement st = con.createStatement();
-            st.executeQuery("SELECT * FROM bench ORDER BY data->>'uuid' DESC");
+            ResultSet rs = st.executeQuery("SELECT pg_size_pretty(pg_total_relation_size('\"public\".\"bench\"'));");
+
+            while (rs.next()) {
+                String out = rs.getString(1);
+                System.out.println(out);
+                rs.close();
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
-        return 0;
-    }
-
-    @Override
-    public Object tearDown() {
         return 0;
     }
 }

@@ -3,11 +3,9 @@ package Dbs.Contracts;
 public interface Worker {
     Object setUp();
     Object insert();
-    Object updateAll();
-    Object selectAll();
-    Object selectOne(String itemToFind);
+    Object update();
+    Object select();
     Object delete();
-    Object sort();
-    Object tearDown();
+    Object stat();
     String getWorkerName();
 }
