@@ -5,16 +5,14 @@ import Dbs.Contracts.Worker;
 import java.util.concurrent.Callable;
 
 public class WorkerAnalyser {
-    private String workerName;
     private Worker worker;
 
-    public WorkerAnalyser(Worker w, String workerName){
-        this.workerName = workerName;
+    public WorkerAnalyser(Worker w){
         this.worker = w;
     }
 
     public void execBench(){
-        System.out.println("Bench launched for " + workerName);
+        System.out.println("Bench launched for " + worker.getWorkerName());
 
         executor(() -> worker.setUp(), "setUp");
         executor(() -> worker.insert(), "insert");
@@ -25,7 +23,7 @@ public class WorkerAnalyser {
         executor(() -> worker.delete(), "delete");
         executor(() -> worker.tearDown(), "tearDown");
 
-        System.out.println("Bench finished for " + workerName);
+        System.out.println("Bench finished for " + worker.getWorkerName());
     }
 
     public void executor(Callable<?> func, String operation){
@@ -39,6 +37,6 @@ public class WorkerAnalyser {
 
         long stopTime = System.currentTimeMillis();
 
-        System.out.println("Elapsed time was " + (stopTime - startTime) + " miliseconds for worker " + workerName + " on " + operation + " operation");
+        System.out.println("Elapsed time was " + (stopTime - startTime) + " miliseconds for worker " + worker.getWorkerName() + " on " + operation + " operation");
     }
 }

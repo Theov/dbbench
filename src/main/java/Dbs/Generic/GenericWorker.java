@@ -1,21 +1,14 @@
 package Dbs.Generic;
 
-import Commons.UuidUtil;
+import Commons.DataSetGenerator.DataSet;
 import Dbs.Contracts.Worker;
 
+public class GenericWorker implements Worker {
+    protected DataSet dataSet;
+    protected String workerName = "generic";
 
-public class AbstractWorker implements Worker {
-    protected boolean errorOccured = false;
-    protected long numberOfElements = 100000;
-
-    protected String getUuid(int i){
-        String output = UuidUtil.getUuid();
-
-        if( i == (numberOfElements / 2)){
-            output = "magicEntry";
-        }
-
-        return output;
+    public GenericWorker(DataSet ds){
+        dataSet = ds;
     }
 
     public Object setUp() {
@@ -48,5 +41,9 @@ public class AbstractWorker implements Worker {
 
     public Object tearDown() {
         return null;
+    }
+
+    public String getWorkerName(){
+        return workerName;
     }
 }

@@ -1,15 +1,20 @@
 package Dbs.PostgreSQL;
 
-import Commons.UuidUtil;
-import Dbs.Generic.AbstractWorker;
+import Commons.DataSetGenerator.DataSet;
+import Dbs.Generic.GenericWorker;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class PostgreWorker extends AbstractWorker {
+public class PostgreWorker extends GenericWorker {
     private PostgreSingleton singleton = new PostgreSingleton();
     private Connection con = null;
+
+    public PostgreWorker(DataSet dataSet) {
+        super(dataSet);
+        workerName = "PostgreSQL";
+    }
 
     @Override
     public Object setUp() {
@@ -19,7 +24,7 @@ public class PostgreWorker extends AbstractWorker {
             Statement st = con.createStatement();
             st.executeQuery("CREATE TABLE IF NOT EXISTS bench (data jsonb);");
         } catch (SQLException e) {
-            errorOccured = true;
+            e.printStackTrace();
         }
 
         return 0;
@@ -27,12 +32,12 @@ public class PostgreWorker extends AbstractWorker {
 
     @Override
     public Object insert() {
-        for(int i = 0; i < numberOfElements; i++) {
+        for(String document : dataSet.getDataset()) {
             try {
                 Statement st = con.createStatement();
-                st.executeQuery("INSERT INTO bench VALUES ('{\"uuid\":\" " + getUuid(i) + " \"}')");
+                st.executeQuery("INSERT INTO bench VALUES ('"+document+"')");
             } catch (SQLException e) {
-                errorOccured = true;
+                e.printStackTrace();
             }
         }
 
@@ -43,9 +48,9 @@ public class PostgreWorker extends AbstractWorker {
     public Object updateAll() {
         try {
             Statement st = con.createStatement();
-            st.executeQuery("UPDATE FROM bench SET data = '{\"uuid\":\" " + getUuid(0) + " \"}'");
+            st.executeQuery("UPDATE FROM bench SET data = '{\"uuid\":\" " + "XXXX" + " \"}'");
         } catch (SQLException e) {
-            errorOccured = true;
+            e.printStackTrace();
         }
 
         return 0;
@@ -57,7 +62,7 @@ public class PostgreWorker extends AbstractWorker {
             Statement st = con.createStatement();
             st.executeQuery("SELECT * FROM bench");
         } catch (SQLException e) {
-            errorOccured = true;
+            e.printStackTrace();
         }
 
         return 0;
@@ -69,7 +74,7 @@ public class PostgreWorker extends AbstractWorker {
             Statement st = con.createStatement();
             st.executeQuery("SELECT * FROM bench WHERE data->>'uuid' = 'magicEntry'");
         } catch (SQLException e) {
-            errorOccured = true;
+            e.printStackTrace();
         }
 
         return 0;
@@ -81,7 +86,7 @@ public class PostgreWorker extends AbstractWorker {
             Statement st = con.createStatement();
             st.executeQuery("DELETE FROM bench;");
         } catch (SQLException e) {
-            errorOccured = true;
+            e.printStackTrace();
         }
 
         return 0;
@@ -93,7 +98,7 @@ public class PostgreWorker extends AbstractWorker {
             Statement st = con.createStatement();
             st.executeQuery("SELECT * FROM bench ORDER BY data->>'uuid' DESC");
         } catch (SQLException e) {
-            errorOccured = true;
+            e.printStackTrace();
         }
 
         return 0;

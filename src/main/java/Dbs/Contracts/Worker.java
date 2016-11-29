@@ -9,4 +9,5 @@ public interface Worker {
     Object delete();
     Object sort();
     Object tearDown();
+    String getWorkerName();
 }

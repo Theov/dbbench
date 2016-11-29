@@ -1,22 +1,24 @@
 package Dbs.Mongo;
 
-import Dbs.Generic.AbstractWorker;
+import Commons.DataSetGenerator.DataSet;
+import Dbs.Generic.GenericWorker;
 import com.mongodb.*;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
-import org.bson.BsonDocument;
+import com.mongodb.util.JSON;
 import org.bson.Document;
-import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.conversions.Bson;
 
-import java.util.Collection;
-
-public class MongoWorker extends AbstractWorker {
+public class MongoWorker extends GenericWorker {
     private MongoSingleton singleton = new MongoSingleton();
     private MongoClient cli;
     private MongoDatabase db;
+
+    public MongoWorker(DataSet dataSet) {
+        super(dataSet);
+        workerName = "MongoDB";
+    }
 
     @Override
     public Object setUp() {
@@ -29,16 +31,13 @@ public class MongoWorker extends AbstractWorker {
 
     @Override
     public Object insert() {
-        for (int i = 0; i < numberOfElements; i++){
-            db.getCollection("bench").insertOne(new Document().append("uuid", getUuid(i)));
-        }
-
+        //dataSet.getDataset().forEach(item->db.getCollection("bench").insertOne(new Document(JSON.parse(item))));
         return 0;
     }
 
     @Override
     public Object updateAll() {
-        db.getCollection("bench").updateMany(Filters.eq("uuid", "magicEntry"), new Document("$set", new Document("uuid", getUuid(0))));
+        db.getCollection("bench").updateMany(Filters.eq("uuid", "magicEntry"), new Document("$set", new Document("uuid", "XXXX")));
         return 0;
     }
 
