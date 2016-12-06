@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Controller {
     public void execBench() {
-        DataSet dataSet = new DataSet(1000000);
+        DataSet dataSet = new DataSet(10000);
         System.out.println("dataset initialized");
 
         List<WorkerAnalyser> workerCollection = new ArrayList<>();

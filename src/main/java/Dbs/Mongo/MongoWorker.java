@@ -49,24 +49,26 @@ public class MongoWorker extends GenericWorker {
         for(int i = 0; i < dataSet.getNumberOfElements(); i++) {
             col.updateOne(dataSet.getMagicFilter(), dataSet.getUpdatedDocumentDocument());
         }
+        
 
         return 0;
     }
 
     @Override
     public Object select() {
-        for(int i = 0; i < dataSet.getNumberOfElements(); i++) {
-            col.find(dataSet.getMagicFilter());
-        }
+        dataSet.getDocumentCriterias().forEach(
+                item->col.find(item).iterator()
+        );
 
         return 0;
     }
 
     @Override
     public Object delete() {
-        for(int i = 0; i < dataSet.getNumberOfElements(); i++) {
-            col.deleteOne(dataSet.getDocumentDocuments().get(i));
-        }
+        dataSet.getDocumentCriterias().forEach(
+                item->col.deleteOne(item)
+        );
+
         return 0;
     }
 

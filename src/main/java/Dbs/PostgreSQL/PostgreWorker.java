@@ -47,40 +47,41 @@ public class PostgreWorker extends GenericWorker {
 
     @Override
     public Object update() {
-        for(int i = 0; i < dataSet.getNumberOfElements(); i++) {
+        dataSet.getStringCriterias().forEach(item->{
             try {
                 Statement st = con.createStatement();
-                st.executeQuery("UPDATE FROM bench SET data = '" + dataSet.getUpdatedDocument() + "' WHERE data->>firstname = '"+dataSet.getMagicFirstName()+"");
+                st.executeQuery("UPDATE FROM bench SET data = '" + dataSet.getUpdatedDocument() + "' WHERE data->>firstname = '"+item+"'");
             } catch (SQLException e) {
                 //e.printStackTrace();
             }
-        }
+        });
         return 0;
     }
 
     @Override
     public Object select() {
-        for(int i = 0; i < dataSet.getNumberOfElements(); i++) {
+        dataSet.getStringCriterias().forEach(item->{
             try {
                 Statement st = con.createStatement();
-                st.executeQuery("SELECT * FROM bench WHERE data->>firstname = '"+dataSet.getMagicFirstName()+"'");
+                st.executeQuery("SELECT * FROM bench WHERE data->>firstname = '"+item+"'");
             } catch (SQLException e) {
                 //e.printStackTrace();
             }
-        }
+        });
+
         return 0;
     }
 
     @Override
     public Object delete() {
-        for(int i = 0; i < dataSet.getNumberOfElements(); i++) {
+        dataSet.getStringCriterias().forEach(item->{
             try {
                 Statement st = con.createStatement();
-                st.executeQuery("DELETE FROM bench WHERE data = '"+ dataSet.getDataset().get(i) +"'");
+                st.executeQuery("DELETE FROM bench WHERE data = '"+item+"'");
             } catch (SQLException e) {
                 //e.printStackTrace();
             }
-        }
+        });
 
         return 0;
     }

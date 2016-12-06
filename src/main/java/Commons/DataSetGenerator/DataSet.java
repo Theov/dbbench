@@ -14,15 +14,17 @@ public class DataSet {
     private List<String> stringDocuments;
     private List<Document> documentDocuments;
 
-    private String magicFirstName;
-    private Bson magicFilter;
+    private List<String> stringCriterias;
+    private List<Document> documentCriterias;
 
+    private String magicFirstName;
+
+    private Bson magicFilter;
     private int numberOfElements;
 
     private String updatedDocument;
-    private Document updatedDocumentDocument;
-    private Bson magicSort = Sorts.ascending("firstname");
 
+    private Document updatedDocumentDocument;
     public DataSet(int numberOfElements) {
         this.numberOfElements = numberOfElements;
         populateDataSet();
@@ -31,6 +33,8 @@ public class DataSet {
     private void populateDataSet(){
         stringDocuments = new ArrayList<>();
         documentDocuments = new ArrayList<>();
+        stringCriterias = new ArrayList<>();
+        documentCriterias = new ArrayList<>();
 
         for(int i = 0; i < numberOfElements; i++){
             String doc = DocumentGenerator.getDocument();
@@ -38,8 +42,25 @@ public class DataSet {
             stringDocuments.add(doc);
             documentDocuments.add(Document.parse(doc));
 
+            updateSearchCriterias(new JSONObject(doc).getString("firstname"));
             setMagicAttributes(i);
         }
+
+        setDocumentCriterias();
+    }
+
+    private void updateSearchCriterias(String firstnameToAdd) {
+        boolean criteriaAlreadyAdd = stringCriterias.stream().anyMatch(obj-> obj.equals(firstnameToAdd));
+
+        if(!criteriaAlreadyAdd){
+            stringCriterias.add(firstnameToAdd);
+        }
+    }
+
+    private void setDocumentCriterias() {
+        stringCriterias.forEach(item->
+           documentCriterias.add(new Document("firstname", item))
+        );
     }
 
     private void setMagicAttributes(int actualIndex) {
@@ -49,7 +70,7 @@ public class DataSet {
             magicFirstName = objUser.getString("firstname");
             magicFilter = Filters.eq("firstname", magicFirstName);
 
-            updatedDocument = stringDocuments.get(actualIndex - 1);
+            updatedDocument = objUser.put("updated", "updated").toString();
             updatedDocumentDocument = new Document("$set", Document.parse(updatedDocument));
 
             System.out.println("magicDocument -> " + stringDocuments.get(actualIndex));
@@ -85,7 +106,11 @@ public class DataSet {
         return updatedDocumentDocument;
     }
 
-    public Bson magicSort() {
-        return magicSort;
+    public List<String> getStringCriterias() {
+        return stringCriterias;
+    }
+
+    public List<Document> getDocumentCriterias() {
+        return documentCriterias;
     }
 }
